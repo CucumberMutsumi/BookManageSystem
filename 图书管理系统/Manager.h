@@ -18,7 +18,7 @@ public:
 
 	int GetPassWord();
 
-	void CreatManager();
+	void SetData(int ID, int PasWrd);
 
 	~Manager();
 };

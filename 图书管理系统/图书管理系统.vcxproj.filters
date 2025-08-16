@@ -24,12 +24,24 @@
     <ClCompile Include="Manager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Tourist.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Book.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="图书管理类.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Manager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Tourist.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Book.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

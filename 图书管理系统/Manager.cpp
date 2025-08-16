@@ -21,7 +21,8 @@ int Manager::GetPassWord()
 	return this->PassWord;
 }
 
-void Manager::CreatManager()
+void Manager::SetData(int ID, int PasWrd)
 {
-
+	Id = ID;
+	PassWord = PasWrd;
 }
