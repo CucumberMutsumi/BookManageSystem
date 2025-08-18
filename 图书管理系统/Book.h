@@ -8,9 +8,9 @@ class Book
 private:
 	int m_id;
 	string m_bookname;
-	int m_total;
 	double m_price;
 public:
+	int m_total;
 	Book();
 
 	void SetBookData(int id, string bookname, int count,double price);

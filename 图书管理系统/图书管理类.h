@@ -63,6 +63,8 @@ public:
 
 	void ShowTourist();//输出游客
 
+	//void ShowBooks();//输出书籍
+
 	void ShowBooks();//输出书籍信息
 
 	void ExitSystem();//退出系统
@@ -76,6 +78,14 @@ public:
 	void DeleteBook();//删除书籍
 
 	void ModifyBookInfo();//修改书籍信息
+
+	void BorrowBook();//借书
+
+	void ReturnBook();//还书
+
+	void ShowBorrowBook();//显示已借的书籍
+
+	Tourist RecoreLoginT;//存储登录的游客
 
 	~BookManage();
 };

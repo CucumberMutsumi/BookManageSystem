@@ -189,6 +189,7 @@ bool BookManage::Login(int identity)
 				}
 				if (this->Is_TouristExist(id, psw))
 				{
+					this->RecoreLoginT=this->m_Tourist[id];
 					return true;
 				}
 				else
@@ -727,6 +728,11 @@ void BookManage::SaveTourist()
 		auto& T = pair.second;
 		ofs << "游客ID:" << T.Getid() << endl;
 		ofs << "密码:" << T.Getpsw() << endl;
+		ofs << "已借书籍:" << endl;
+		for (int i = 0; i < T.books.size(); i++)
+		{
+			ofs<< T.books[i] << endl;
+		}
 	}
 	cout << "数据保存成功！" << endl;
 	ofs.close();
@@ -750,6 +756,8 @@ void BookManage::LoadTourist()
 	int psw=0;
 	string line;
 	int state = 0;
+	bool IsFoundKeyWord = false;
+	vector<string> TempBookName;
 	//读入数据
 	while (getline(ifs, line))
 	{
@@ -765,13 +773,13 @@ void BookManage::LoadTourist()
 			psw = stoi(line.substr(5));
 			state++;
 		}
+		//存入已借的书籍
 
 		if (state == 2)
 		{
 			Tourist tourist;
 			tourist.SetData(id, psw);
 			this->m_Tourist.insert(make_pair(id, tourist));
-			//cout << "读入游客数据成功!" << endl;
 			state = 0;
 			id = 0;
 			psw = 0;
@@ -806,10 +814,11 @@ void BookManage::ShowBooks()
 {
 	for (auto& pair : this->m_Books)
 	{
+		cout << "-------------------------------" << endl;
 		cout << pair.first << endl;
 		cout << pair.second.GetBookName() << endl;
-		cout << pair.second.GetTotal() << endl;
 		cout << pair.second.GetPrice() << endl;
+		cout << "-------------------------------" << endl;
 	}
 }
 
@@ -1348,6 +1357,48 @@ void BookManage::ModifyBookInfo()
 			this->SaveBook();
 		}
 	}
+}
+
+//借书
+void BookManage::BorrowBook()
+{
+	this->ShowBooks();
+	cout << "请输入需要借书的书籍ID" << endl;
+	int bookid;
+	while (true)
+	{
+		cin >> bookid;
+		if (cin.fail())
+		{
+			cin.clear();
+			cin.ignore(10000, '\n');
+			cout << "输入的ID错误!请输入选择:";
+		}
+		else
+		{
+			break;
+		}
+	}
+	map<int, Book>::iterator pos = this->m_Books.find(bookid);
+	if (pos != this->m_Books.end()&& pos->second.GetTotal() != 0)
+	{
+		pos->second.m_total--;
+		this->RecoreLoginT.books.push_back(pos->second.GetBookName());
+		this->SaveBook();
+		this->SaveTourist();
+	}
+}
+
+//还书
+void BookManage::ReturnBook()
+{
+
+}
+
+//显示已借的书籍
+void BookManage::ShowBorrowBook()
+{
+
 }
 
 BookManage::~BookManage()

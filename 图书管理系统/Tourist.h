@@ -4,6 +4,8 @@
 #include<string>
 using namespace std;
 
+class Book;
+
 class Tourist
 {
 private:
