@@ -22,7 +22,3 @@ public:
 
 	~Tourist();
 };
-/*1.ID
-  2.psw
-  3.vector<string> books
-  */

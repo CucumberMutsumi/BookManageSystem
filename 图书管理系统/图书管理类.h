@@ -8,7 +8,7 @@
 #include"Tourist.h"
 #include"Book.h"
 
-using namespace	std;
+
 
 class BookManage
 {
@@ -64,6 +64,18 @@ public:
 	void ShowTourist();//输出游客
 
 	void ShowBooks();//输出书籍信息
+
+	void ExitSystem();//退出系统
+
+	void ShowBookInfo();//输出书籍信息
+
+	pair<bool,int>IsBookNameExist();//查找书名
+
+	bool IsBookIdExist(int id);//书籍ID是否存在
+
+	void DeleteBook();//删除书籍
+
+	void ModifyBookInfo();//修改书籍信息
 
 	~BookManage();
 };

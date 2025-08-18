@@ -42,12 +42,16 @@ int main()
 					BM.CreatNewManager();
 					break;
 				case 3:
+					BM.ModifyBookInfo();
 					break;
 				case 4:
+					BM.ShowBookInfo();
 					break;
 				case 5:
+					BM.DeleteBook();
 					break;
 				case 0:
+					BM.ExitSystem();
 					break;
 				default:
 					system("pause");
@@ -66,8 +70,11 @@ int main()
 				case 3:
 					break;
 				case 0:
+					BM.ExitSystem();
 					break;
 				default:
+					system("pause");
+					system("cls");
 					break;
 				}
 			}

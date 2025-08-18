@@ -72,6 +72,7 @@ bool BookManage::Login(int identity)
 {
 	while (true)
 	{
+		statr:
 		if (identity == 1)//提示用户输入id和密码
 		{
 			cout << "请输入id:  ";
@@ -127,64 +128,79 @@ bool BookManage::Login(int identity)
 		else
 		{
 			//在这里添加询问是否是新用户
-			//登录或新游客
-			// int chioce;
-			// this->show()
-			// cin>>chioce
-			//if(chioce==1)
-			// {
-			// }
-			// else
-			// {|
-			// }|
-			// \ /接入下面这段
-			cout << "请输入id:  ";
-			int id;
+			cout << "-----------------------------------" << endl;
+			cout << "------------1.登录-----------------" << endl;
+			cout << "------------2.创建新账号-----------" << endl;
+			cout << "-----------------------------------" << endl;
+			int choice = 0;
 			while (true)
 			{
-				cin >> id;
-				if (cin.fail())
+				cin >> choice;
+				if (cin.fail() || choice < 0 || choice>2)
 				{
 					cin.clear();
 					cin.ignore(10000, '\n');
-					cout << "输入有误！请重新输入:  ";
+					cout << "输入有误!请重新输入:";
 				}
 				else
 				{
 					break;
 				}
 			}
-			cout << "请输入密码:  ";
-			int psw;
-			while (true)
-			{
-				cin >> psw;
-				if (cin.fail())
-				{
-					cin.clear();
-					cin.ignore(10000, '\n');
-					cout << "输入有误！请重新输入:  ";
-				}
-				else
-				{
-					break;
-				}
-			}
-			bool Is_TouristExist;
-			Is_TouristExist = this->Is_TouristExist(id, psw);
-			if (Is_TouristExist)
-			{
-				return true;
-			}
+		
+			if(choice==2)
+			 {
+				this->AddNewTourist();
+				goto statr;
+			 }
 			else
 			{
-				cout << "游客ID或密码错误！" << endl;
-				cout << "请选择操作：1-重新尝试 2-返回上一级" << endl;
-				int choice;
-				cin >> choice;
-				if (choice != 1) // 如果用户不选择重新尝试，则返回登录失败
+				cout << "请输入id:  ";
+				int id;
+				while (true)
 				{
-					return false;
+					cin >> id;
+					if (cin.fail())
+					{
+						cin.clear();
+						cin.ignore(10000, '\n');
+						cout << "输入有误！请重新输入:  ";
+					}
+					else
+					{
+						break;
+					}
+				}
+				cout << "请输入密码:  ";
+				int psw;
+				while (true)
+				{
+					cin >> psw;
+					if (cin.fail())
+					{
+						cin.clear();
+						cin.ignore(10000, '\n');
+						cout << "输入有误！请重新输入:  ";
+					}
+					else
+					{
+						break;
+					}
+				}
+				if (this->Is_TouristExist(id, psw))
+				{
+					return true;
+				}
+				else
+				{
+					cout << "游客ID或密码错误！" << endl;
+					cout << "请选择操作：1-重新尝试 2-返回上一级" << endl;
+					int choice;
+					cin >> choice;
+					if (choice != 1) // 如果用户不选择重新尝试，则返回登录失败
+					{
+						return false;
+					}
 				}
 			}
 		}
@@ -197,7 +213,7 @@ void BookManage::ShowMenu(int Identity)
 {
 	if (Identity == 1)
 	{
-		cout << "-----------------------------------------" << endl;
+		cout << "---------- <    登录成功     > ----------" << endl;
 		cout << "--------------1.添加书籍-----------------" << endl;
 		cout << "--------------2.添加新的管理员-----------" << endl;
 		cout << "--------------3.修改书籍信息-------------" << endl;
@@ -208,7 +224,7 @@ void BookManage::ShowMenu(int Identity)
 	}
 	else
 	{
-		cout << "-----------------------------------------" << endl;
+		cout << "---------- <    登录成功     > ----------" << endl;
 		cout << "--------------1.借书---------------------" << endl;
 		cout << "--------------2.还书---------------------" << endl;
 		cout << "--------------3.查看已借书籍-------------" << endl;
@@ -578,7 +594,7 @@ void BookManage::SaveBook()
 		ofs << "库存:" << B.GetTotal() << endl;
 		ofs << "------------------------" << endl;
 	}
-	cout << "成功保存!" << endl;
+	cout << "书籍信息更新成功!" << endl;
 	ofs.close();
 }
 
@@ -637,7 +653,7 @@ void BookManage::LoadBooks()
 			state++;
 		}
 	}
-	cout << "加载图书数据成功!" << endl;
+	cout << "加载"<<this->m_Books.size()<<"本图书数据成功!" << endl;
 	ifs.close();
 }
 
@@ -794,6 +810,543 @@ void BookManage::ShowBooks()
 		cout << pair.second.GetBookName() << endl;
 		cout << pair.second.GetTotal() << endl;
 		cout << pair.second.GetPrice() << endl;
+	}
+}
+
+//退出系统
+void BookManage::ExitSystem()
+{
+	cout << "欢迎下次使用!" << endl;
+	system("pause");
+	exit(0);
+}
+
+//输出书籍信息
+void BookManage::ShowBookInfo()
+{
+	Restart:
+	cout << "---------------------------" << endl;
+	cout << "-------1.用书名查找--------" << endl;
+	cout << "-------2.用ID查找----------" << endl;
+	cout << "---------------------------" << endl;
+	int choice = 0;
+	while (true)
+	{
+		cin >> choice;
+		if (cin.fail() || choice < 0 || choice>2)
+		{
+			cin.clear();
+			cin.ignore(10000, '\n');
+			cout << "输入有误!请重新输入:";
+		}
+		else
+		{
+			break;
+		}
+	}
+	
+	if (choice == 1)
+	{
+		TryAgain:
+		pair<bool, int> it = this->IsBookNameExist();
+		if (it.second==-1)
+		{
+			cout << "未找到书籍!输入选择:" << endl;
+			cout << "---------1.重试-------------" << endl;
+			cout << "---------2.切换搜索方式-----" << endl;
+			cout << "---------0.退出-------------" << endl;
+			int input;
+			while (true)
+			{
+				cin >> input;
+				if (cin.fail() || input < 0 || input>2)
+				{
+					cin.clear();
+					cin.ignore(10000, '\n');
+					cout << "输入错误!请重新输入:";
+				}
+				else
+				{
+					break;
+				}
+			}
+			if (input == 1)
+			{
+				goto TryAgain;
+			}
+			else if (input == 2)
+			{
+				goto Restart;
+			}
+			else if (input == 0)
+			{
+				exit(0);
+			}
+		}
+		else
+		{
+			cout << "书籍ID:" << this->m_Books[it.second].GetBookId() << endl;
+			cout << "书名:" << this->m_Books[it.second].GetBookName() << endl;
+			cout << "库存:" << this->m_Books[it.second].GetTotal() << endl;
+			cout << "单价:" << this->m_Books[it.second].GetPrice() << endl;
+		}
+	}
+	else
+	{
+		TryAgain02:
+		int id;
+		cout << "输入书籍ID:" << endl;
+		
+		while (true)
+		{
+			cin >> id;
+			if (cin.fail())
+			{
+				cin.clear();
+				cin.ignore(10000, '\n');
+				cout << "您输入了不正确的字符！请重新尝试: ";
+			}
+			else
+			{
+				break;
+			}
+		}
+		if (this->IsBookIdExist(id))
+		{
+			cout << "书籍ID:" << this->m_Books[id].GetBookId() << endl;
+			cout << "书名:" << this->m_Books[id].GetBookName() << endl;
+			cout << "库存:" << this->m_Books[id].GetTotal() << endl;
+			cout << "单价:" << this->m_Books[id].GetPrice() << endl;
+		}
+		else
+		{
+			cout << "未找到书籍!输入选择:" << endl;
+			cout << "---------1.重试-------------" << endl;
+			cout << "---------2.切换搜索方式-----" << endl;
+			cout << "---------0.退出-------------" << endl;
+			int input;
+			while (true)
+			{
+				cin >> input;
+				if (cin.fail() || input < 0 || input>2)
+				{
+					cin.clear();
+					cin.ignore(10000, '\n');
+					cout << "输入错误!请重新输入:";
+				}
+				else
+				{
+					break;
+				}
+			}
+			if (input == 1)
+			{
+				goto TryAgain02;
+			}
+			else if (input == 2)
+			{
+				goto Restart;
+			}
+			else if (input == 0)
+			{
+				exit(0);
+			}
+		}
+	}
+	system("pause");
+	system("cls");
+}
+
+//查找书名
+pair<bool, int> BookManage::IsBookNameExist()
+{
+	string bookname;
+	cout << "输入书籍名称" << endl;
+	cin >> bookname;
+	
+	for (auto& pair : this->m_Books)
+	{
+		auto & B = pair.second;
+		if (B.GetBookName() == bookname)
+		{
+			int id = B.GetBookId();
+			return { true,id };
+		}
+	}
+	
+	return { false,-1 };
+}
+
+//书籍ID是否存在
+bool BookManage::IsBookIdExist(int id)
+{
+	map<int, Book>::iterator pos = this->m_Books.find(id);
+	if (pos != this->m_Books.end())
+	{
+		return true;
+	}
+	return false;
+}
+
+//删除书籍
+void BookManage::DeleteBook()
+{
+	Restart01:
+	cout << "---------------------------" << endl;
+	cout << "-------1.用书名删除--------" << endl;
+	cout << "-------2.用ID删除----------" << endl;
+	cout << "---------------------------" << endl;
+	int choice = 0;
+	while (true)
+	{
+		cin >> choice;
+		if (cin.fail() || choice < 0 || choice>2)
+		{
+			cin.clear();
+			cin.ignore(10000, '\n');
+			cout << "输入有误!请重新输入:";
+		}
+		else
+		{
+			break;
+		}
+	}
+	if (choice == 1)
+	{
+	    TryAgain01:
+		pair<bool, int> it = this->IsBookNameExist();
+		if (it.second == -1)
+		{
+			cout << "未找到书籍!输入选择:" << endl;;
+			cout << "---------1.重试-------------" << endl;
+			cout << "---------2.切换搜索方式-----" << endl;
+			cout << "---------0.退出-------------" << endl;
+			int input;
+			while (true)
+			{
+				cin >> input;
+				if (cin.fail() || input < 0 || input>2)
+				{
+					cin.clear();
+					cin.ignore(10000, '\n');
+					cout << "输入错误!请重新输入:";
+				}
+				else
+				{
+					break;
+				}
+			}
+			if (input == 1)
+			{
+				goto TryAgain01;
+			}
+			else if (input == 2)
+			{
+				goto Restart01;
+			}
+			else if (input == 0)
+			{
+				exit(0);
+			}
+		}
+		else
+		{
+			this->m_Books.erase(it.second);
+			this->SaveBook();
+		}
+	}
+	else
+	{
+		TryAgain02:
+		int id;
+		cout << "输入书籍ID:" << endl;
+
+		while (true)
+		{
+			cin >> id;
+			if (cin.fail())
+			{
+				cin.clear();
+				cin.ignore(10000, '\n');
+				cout << "您输入了不正确的字符！请重新尝试: ";
+			}
+			else
+			{
+				break;
+			}
+		}
+		if (this->IsBookIdExist(id))
+		{
+			this->m_Books.erase(id);
+			this->SaveBook();
+		}
+		else
+		{
+			cout << "未找到书籍!输入选择:" << endl;
+			cout << "---------1.重试-------------" << endl;
+			cout << "---------2.切换搜索方式-----" << endl;
+			cout << "---------0.退出-------------" << endl;
+			int input;
+			while (true)
+			{
+				cin >> input;
+				if (cin.fail() || input < 0 || input>2)
+				{
+					cin.clear();
+					cin.ignore(10000, '\n');
+					cout << "输入错误!请重新输入:";
+				}
+				else
+				{
+					break;
+				}
+			}
+			if (input == 1)
+			{
+				goto TryAgain02;
+			}
+			else if (input == 2)
+			{
+				goto Restart01;
+			}
+			else if (input == 0)
+			{
+				exit(0);
+			}
+		}
+	}
+	system("pause");
+	system("cls");
+}
+
+//修改书籍信息
+void BookManage::ModifyBookInfo()
+{
+	Restart02:
+	cout << "--------------------------------------------" << endl;
+	cout << "---------------请选择搜索方式---------------" << endl;
+	cout << "------------1.需要修改的书籍名称------------" << endl;
+	cout << "------------2.需要修改的书籍ID--------------" << endl;
+	cout << "--------------------------------------------" << endl;
+	int choice;
+	while (true)
+	{
+		cin >> choice;
+		if (cin.fail() || choice < 0 || choice>2)
+		{
+			cin.clear();
+			cin.ignore(10000, '\n');
+			cout << "输入错误，请重新输入: ";
+		}
+		else
+		{
+			break;
+		}
+	}
+	if (choice == 1)
+	{	
+		TryAgain02:
+		pair<bool, int> B = this->IsBookNameExist();
+		if (B.second == -1)
+		{
+			cout << "未找到书籍!请输入选择:" << endl;
+			cout << "---------1.重试-------------" << endl;
+			cout << "---------2.切换搜索方式-----" << endl;
+			cout << "---------0.退出-------------" << endl;
+			int input;
+			while (true)
+			{
+				cin >> input;
+				if (cin.fail() || input < 0 || input>2)
+				{
+					cin.clear();
+					cin.ignore(10000,'\n');
+					cout << "输入不正确!请重新输入:";
+				}
+				else
+				{
+					break;
+				}
+			}
+			if (input == 1)
+			{
+				goto TryAgain02;
+			}
+			else if (input == 2)
+			{
+				goto Restart02;
+			}
+			else if (input == 0)
+			{
+				exit(0);
+			}
+		}
+		else
+		{
+			cout << "请输入需要修改的内容" << endl;
+			cout << "书籍ID:";
+			int bookid;
+			while (true)
+			{
+				cin >> bookid;
+				if (cin.fail() || bookid < 10000 || bookid>1000000 || this->IsBookIdExist(bookid))
+				{
+					cin.clear();
+					cin.ignore(10000, '\n');
+					cout << "书籍ID不合理或已存在!请重新输入:";
+				}
+				else
+				{
+					break;
+				}
+			}
+			cout << "书名:";
+			string bookname;
+			cin >> bookname;
+			cout << "库存:";
+			int count;
+			while (true)
+			{
+				cin >> count;
+				if (cin.fail() || count < 0 || count>1000)
+				{
+					cin.clear();
+					cin.ignore(10000, '\n');
+					cout << "书籍库存不合理或输入错误!请重新输入:";
+				}
+				else
+				{
+					break;
+				}
+			}
+			cout << "单价:";
+			int price;
+			while (true)
+			{
+				cin >> price;
+				if (cin.fail() || price < 0 || price>150)
+				{
+					cin.clear();
+					cin.ignore(10000, '\n');
+					cout << "书籍单价不合理或输入错误!请重新输入:";
+				}
+				else
+				{
+					break;
+				}
+			}
+			this->m_Books[B.second].SetBookData(bookid, bookname, count, price);
+			this->SaveBook();
+		}
+	}
+	else
+	{	
+		//按ID修改
+		TryAgain03:
+		cout << "请输入书籍ID:" << endl;
+		int id;
+		
+		while (true)
+		{
+			cin >> id;
+			if (cin.fail() || id < 10000 || id>100000)
+			{
+				cin.clear();
+				cin.ignore(10000, '\n');
+				cout << "输入错误!请重新输入:";
+			}
+			else
+			{
+				break;
+			}
+		}
+		if (!this->IsBookIdExist(id))
+		{
+			cout << "未找到书籍!请输入选择:" << endl;
+			cout << "---------1.重试-------------" << endl;
+			cout << "---------2.切换搜索方式-----" << endl;
+			cout << "---------0.退出-------------" << endl;
+			int input;
+			while (true)
+			{
+				cin >> input;
+				if (cin.fail() || input < 0 || input>2)
+				{
+					cin.clear();
+					cin.ignore(10000, '\n');
+					cout << "输入不正确!请重新输入:";
+				}
+				else
+				{
+					break;
+				}
+			}
+			if (input == 1)
+			{
+				goto TryAgain03;
+			}
+			else if (input == 2)
+			{
+				goto Restart02;
+			}
+			else if (input == 0)
+			{
+				exit(0);
+			}
+		}
+		else
+		{
+			cout << "请输入需要修改的内容" << endl;
+			cout << "书籍ID:";
+			int bookid;
+			while (true)
+			{
+				cin >> bookid;
+				if (cin.fail() || bookid < 10000 || bookid>100000 || this->IsBookIdExist(bookid))
+				{
+					cin.clear();
+					cin.ignore(10000, '\n');
+					cout << "书籍ID不合理或已存在!请重新输入:";
+				}
+			}
+			cout << "书名:";
+			string bookname;
+			cin >> bookname;
+			cout << "库存:";
+			int count;
+			while (true)
+			{
+				cin >> count;
+				if (cin.fail() || count < 0 || count>1000)
+				{
+					cin.clear();
+					cin.ignore(10000, '\n');
+					cout << "书籍库存不合理或输入错误!请重新输入:";
+				}
+				else
+				{
+					break;
+				}
+			}
+			cout << "单价:";
+			int price;
+			while (true)
+			{
+				cin >> price;
+				if (cin.fail() || price < 0 || price>150)
+				{
+					cin.clear();
+					cin.ignore(10000, '\n');
+					cout << "书籍单价不合理或输入错误!请重新输入:";
+				}
+				else
+				{
+					break;
+				}
+			}
+			this->m_Books[id].SetBookData(bookid, bookname, count, price);
+			this->SaveBook();
+		}
 	}
 }
 
