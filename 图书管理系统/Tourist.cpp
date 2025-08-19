@@ -12,6 +12,16 @@ void Tourist::SetData(int id, int psw)
 	m_psw = psw;
 }
 
+void Tourist::setid(int id)
+{
+	this->m_id = id;
+}
+
+void Tourist::setpsw(int psw)
+{
+	this->m_psw = psw;
+}
+
 int Tourist::Getid()
 {
 	return m_id;

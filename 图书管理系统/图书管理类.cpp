@@ -51,10 +51,10 @@ bool BookManage::Is_TouristExist(int id, int psw)
 //验证管理员是否存在
 bool BookManage::Is_ManagerExist(int id, int psw)
 {
-	cout << "当前管理员列表：" << endl;
+	/*cout << "当前管理员列表：" << endl;
 	for (auto& pair : this->m_Manager) {
 		cout << "ID: " << pair.first << ", 密码: " << pair.second.GetPassWord() << endl;
-	}
+	}*/
 
 	for (auto& pair : this->m_Manager)
 	{
@@ -206,7 +206,8 @@ bool BookManage::Login(int identity)
 			}
 		}
 	}
-	
+	system("pause");
+	system("cls");
 }
 
 //根据身份显示菜单
@@ -748,44 +749,40 @@ void BookManage::LoadTourist()
 		cout << "打开文件失败！" << endl;
 		return;
 	}
-
-	//清空容器
-	this->m_Tourist.clear();
-	//定义；临时变量
-	int id=0;
-	int psw=0;
+	Tourist tourist;
 	string line;
-	int state = 0;
-	bool IsFoundKeyWord = false;
-	vector<string> TempBookName;
-	//读入数据
+	bool readingbook = false;
 	while (getline(ifs, line))
 	{
 		if (line.find("游客ID:") != string::npos)
 		{
-			//cout << "存入游客ID" << endl;
-			id = stoi(line.substr(7));
-			state++;
+			if (tourist.Getid() != 0)
+			{
+				this->m_Tourist[tourist.Getid()] = tourist;
+				tourist.books.clear();
+			}
+			tourist.setid(stoi(line.substr(7)));
+			readingbook = false;
 		}
 		else if (line.find("密码:") != string::npos)
 		{
-			//cout << "存入密码！" << endl;
-			psw = stoi(line.substr(5));
-			state++;
+			tourist.setpsw(stoi(line.substr(5)));
 		}
-		//存入已借的书籍
-
-		if (state == 2)
+		else if (line.find("已借书籍:") != string::npos)
 		{
-			Tourist tourist;
-			tourist.SetData(id, psw);
-			this->m_Tourist.insert(make_pair(id, tourist));
-			state = 0;
-			id = 0;
-			psw = 0;
+			readingbook = true;
+		}
+		else if (readingbook && !line.empty())
+		{
+			tourist.books.push_back(line);
 		}
 	}
 	
+	if (tourist.Getid() != 0)
+	{
+		this->m_Tourist[tourist.Getid()] = tourist;
+	}
+
 	cout << "加载"<<this->m_Tourist.size()<<"游客数据成功!" << endl;
 	ifs.close();
 }
@@ -815,9 +812,9 @@ void BookManage::ShowBooks()
 	for (auto& pair : this->m_Books)
 	{
 		cout << "-------------------------------" << endl;
-		cout << pair.first << endl;
-		cout << pair.second.GetBookName() << endl;
-		cout << pair.second.GetPrice() << endl;
+		cout << "书籍ID:"<<pair.first << endl;
+		cout << "书名:"<<pair.second.GetBookName() << endl;
+		cout << "价格:"<<pair.second.GetPrice() << endl;
 		cout << "-------------------------------" << endl;
 	}
 }
@@ -1387,6 +1384,12 @@ void BookManage::BorrowBook()
 		this->SaveBook();
 		this->SaveTourist();
 	}
+	else
+	{
+		cout << "书籍库存为空!无法接取!" << endl;
+	}
+	system("pause");
+	system("cls");
 }
 
 //还书
@@ -1398,7 +1401,14 @@ void BookManage::ReturnBook()
 //显示已借的书籍
 void BookManage::ShowBorrowBook()
 {
-
+	cout << "-----------------------" << endl;
+	cout << "已借书籍:" << endl;
+	for (int i = 0; i < this->m_Tourist[this->RecoreLoginT.Getid()].books.size(); ++i)
+	{
+		cout << this->m_Tourist[this->RecoreLoginT.Getid()].books[i] << endl;
+	}
+	system("pause");
+	system("cls");
 }
 
 BookManage::~BookManage()

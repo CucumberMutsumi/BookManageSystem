@@ -18,6 +18,10 @@ public:
 
 	void SetData(int id, int psw);
 
+	void setid(int id);
+
+	void setpsw(int psw);
+
 	int Getid();
 
 	int Getpsw();

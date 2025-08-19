@@ -64,10 +64,12 @@ int main()
 				switch (chioce)
 				{
 				case 1:
+					BM.BorrowBook();
 					break;
 				case 2:
 					break;
 				case 3:
+					BM.ShowBorrowBook();
 					break;
 				case 0:
 					BM.ExitSystem();
