@@ -1395,7 +1395,51 @@ void BookManage::BorrowBook()
 //还书
 void BookManage::ReturnBook()
 {
-
+	TryAgain:
+	string bookname;
+	cout << "请输入您要还的书籍名称:" << endl;
+	cin >> bookname;
+	vector<string>::iterator pos = find(this->RecoreLoginT.books.begin(), this->RecoreLoginT.books.end(), bookname);
+	if (pos != this->RecoreLoginT.books.end())
+	{
+		this->RecoreLoginT.books.erase(pos);
+		this->m_Tourist.erase(this->RecoreLoginT.Getid());
+		this->m_Tourist[this->RecoreLoginT.Getid()] = this->RecoreLoginT;
+		this->SaveTourist();
+		cout << "还书成功!数据已记录" << endl;
+	}
+	else
+	{
+		int input;
+		cout << "未找到书籍!请选择:" << endl;
+		cout << "--------1.退出---------" << endl;
+		cout << "--------2.重试---------" << endl;
+		while (true)
+		{
+			cin >> input;
+			if (cin.fail() || input < 0 || input>2)
+			{
+				cin.clear();
+				cin.ignore(10000, '\n');
+				cout << "输入的指令无效,请重新输入";
+			}
+			else
+			{
+				break;
+			}
+		}
+		
+		if (input == 1)
+		{
+			exit(0);
+		}
+		else
+		{
+			goto TryAgain;
+		}
+	}
+	system("pause");
+	system("cls");
 }
 
 //显示已借的书籍
